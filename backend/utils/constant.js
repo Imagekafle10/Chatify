@@ -1,7 +1,19 @@
 require("dotenv").config();
 
-const { PORT, NODE_ENV, DB, USER, PASSWORD, HOST, JWT_SECRET, JWT_EXPIRY } =
-  process.env;
+const {
+  PORT,
+  NODE_ENV,
+  DB,
+  USER,
+  PASSWORD,
+  HOST,
+  JWT_SECRET,
+  JWT_EXPIRY,
+  RESEND_EMAIL,
+  EMAIL_FROM,
+  EMAIL_NAME,
+  CLIENT_URL,
+} = process.env;
 
 module.exports = {
   PORT,
@@ -12,4 +24,8 @@ module.exports = {
   HOST,
   JWT_SECRET,
   JWT_EXPIRY,
+  RESEND_EMAIL,
+  EMAIL_FROM,
+  EMAIL_NAME,
+  CLIENT_URL,
 };
