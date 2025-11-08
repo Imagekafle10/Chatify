@@ -5,7 +5,9 @@ const {
   JWT_SECRET,
   JWT_EXPIRY,
   COOKIE_EXPIRY,
+  CLIENT_URL,
 } = require("../../utils/constant");
+const { sendWelcomeEmail } = require("../../emails/emailHandler");
 
 const signup = asyncHandler(async (req, res, next) => {
   const { fullName, email, password } = req.body;
@@ -40,6 +42,12 @@ const signup = asyncHandler(async (req, res, next) => {
       JWT_SECRET,
       JWT_EXPIRY
     );
+
+    try {
+      await sendWelcomeEmail(email, fullName, CLIENT_URL);
+    } catch (error) {
+      logger.error("Falied To send Welcome Message");
+    }
 
     // Send response
     return res
