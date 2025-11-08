@@ -1,6 +1,6 @@
 const { createLogger, format, transports } = require("winston");
 const { combine, timestamp, printf } = format;
-const { getCurrentDateTime } = require("../helpers/date");
+const { getCurrentDateTime } = require("../helper/date");
 const { NODE_ENV } = require("../utils/constant");
 const DailyRotateFile = require("winston-daily-rotate-file");
 

@@ -1,4 +1,4 @@
 export const PATH = {
-  AUTH: "/api/auth  ",
+  AUTH: "/api/auth",
   MESSAGE: "/api/message",
 };
