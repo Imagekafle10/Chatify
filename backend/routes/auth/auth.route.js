@@ -1,10 +1,10 @@
 const express = require("express");
+const { authController } = require("../../controller");
+const { validateSignup } = require("../../middleware/authValidation");
 const router = express.Router(); // Corrected
 
 // Example route
-router.get("/signup", (req, res, next) => {
-  res.send("signup");
-});
+router.post("/signup", validateSignup, authController.signup);
 
 router.get("/login", (req, res, next) => {
   res.send("Login");

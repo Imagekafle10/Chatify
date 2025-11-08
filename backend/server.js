@@ -2,17 +2,23 @@ const express = require("express");
 const { PORT } = require("./utils/constant"); // make sure PORT is defined in constant.js
 const { PATH } = require("./utils/path");
 const { authRoute, messageRoute } = require("./routes");
+const errorHandler = require("./utils/erroMiddleware");
+const logger = require("./utils/winstonLoggerConfig");
 require("colors");
 
+require("./config/db");
+require("./Model/sync");
 const app = express();
 
-app.use(PATH.AUTH, authRoute);
-app.use(PATH.MESSAGE, messageRoute);
+//middleware
+app.use(express.json());
 
-// // Middleware to parse JSON
-// app.use(express.json());
+app.use("/api/auth", authRoute);
+app.use("/api/message", messageRoute);
+
+app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server Running at http://localhost:${PORT}`.bgGreen);
+  logger.info(`Server Running at http://localhost:${PORT}`.bgBlue);
 });
