@@ -5,7 +5,7 @@ const User = require("../Model/User");
 
 (async () => {
   try {
-    await sequelize.sync({ alter: true }); // drops tables and recreates
+    await sequelize.sync({ alter: false }); // drops tables and recreates
     logger.info(" All tables synced successfully!");
   } catch (err) {
     logger.error(" Error syncing tables:", err);
