@@ -6,6 +6,8 @@ const {
   JWT_EXPIRY,
   COOKIE_EXPIRY,
   CLIENT_URL,
+  REFRESH_SECRET,
+  REFRESH_EXPIRY,
 } = require("../../utils/constant");
 const { sendWelcomeEmail } = require("../../emails/emailHandler");
 
@@ -31,7 +33,7 @@ const signup = asyncHandler(async (req, res, next) => {
 
     // JWT payload
     const payload = {
-      user_id: user.user_id,
+      id: user.id,
       fullName: user.fullName,
       email: user.email,
     };
@@ -69,4 +71,96 @@ const signup = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { signup };
+const login = asyncHandler(async (req, res, next) => {
+  const { email, password, captchaResponse } = req.body;
+  // console.log(captchaResponse);
+
+  // const captchaVerification = await authService.verifyCaptchaResponse(
+  //   captchaResponse
+  // );
+  // if (!captchaVerification) {
+  //   return CustomErrorHandler.inValidCaptchaResponse();
+  // }
+
+  const responeData = await authService.findUserByEmail(email);
+
+  const user = responeData;
+  const validatePassword = await bcryptService.comparePassword(
+    password,
+    user?.password
+  );
+
+  if (!user || !validatePassword) {
+    return res.status(400).json({
+      message: "Invalid email or password",
+    });
+  }
+
+  //generate access token and refresh token
+  const payload = {
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+  };
+
+  const access_token = await jwtService.generateToken(
+    payload,
+    JWT_SECRET,
+    JWT_EXPIRY
+  );
+  const refresh_token = await jwtService.generateToken(
+    payload,
+    REFRESH_SECRET,
+    REFRESH_EXPIRY
+  );
+
+  //save refresh token in the database
+  await authService.createRefreshToken(user.id, refresh_token);
+
+  res.cookie("refresh_token", refresh_token, {
+    httpOnly: true,
+    secure: false,
+    maxAge: COOKIE_EXPIRY,
+  });
+
+  res.cookie("access_token", access_token, {
+    httpOnly: false,
+    secure: false,
+    maxAge: COOKIE_EXPIRY,
+  });
+
+  res.status(200).json({
+    status: true,
+    message: "Logged in successfully!!!",
+  });
+});
+
+const logout = asyncHandler(async (req, res, next) => {
+  console.log(req.cookies.refresh_token);
+  const refreshToken = req.cookies.refresh_token;
+
+  await authService.logout(refreshToken);
+
+  //clear cookies from browser
+  res.cookie("refresh_token", "", {
+    httpOnly: true,
+    secure: false,
+    expires: new Date(0),
+  });
+
+  res.cookie("access_token", "", {
+    httpOnly: false,
+    secure: false,
+    expires: new Date(0),
+  });
+
+  logger.info(
+    `Username: ${req.user.firstName || "user"} logged out successfully`
+  );
+
+  return res.status(200).json({
+    status: true,
+    message: "Logged out successfully!!!",
+  });
+});
+module.exports = { signup, login, logout };

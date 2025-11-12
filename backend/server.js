@@ -4,11 +4,14 @@ const { PATH } = require("./utils/path");
 const { authRoute, messageRoute } = require("./routes");
 const errorHandler = require("./utils/erroMiddleware");
 const logger = require("./utils/winstonLoggerConfig");
+const cookieParser = require("cookie-parser");
 require("colors");
 
 require("./config/db");
 require("./Model/sync");
 const app = express();
+
+app.use(cookieParser());
 
 //middleware
 app.use(express.json());

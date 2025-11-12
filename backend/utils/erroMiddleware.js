@@ -1,5 +1,5 @@
 const { ValidationError } = require("joi");
-// const CustomErrorHandler = require("./CustomErrorHandler");
+const CustomErrorHandler = require("./CustomErrorHandler");
 const { NODE_ENV } = require("../utils/constant");
 // const { cleanupUploadedFiles } = require("./fileCleanup");
 // const { NotFoundError } = require("./error");
@@ -25,12 +25,12 @@ const errorHandler = (err, req, res, next) => {
     };
   }
 
-  //   if (err instanceof CustomErrorHandler) {
-  //     statusCode = err.status;
-  //     data = {
-  //       message: err.message,
-  //     };
-  //   }
+  if (err instanceof CustomErrorHandler) {
+    statusCode = err.status;
+    data = {
+      message: err.message,
+    };
+  }
 
   res.status(statusCode).json(data);
 };
