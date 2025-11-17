@@ -10,6 +10,7 @@ const {
   REFRESH_EXPIRY,
 } = require("../../utils/constant");
 const { sendWelcomeEmail } = require("../../emails/emailHandler");
+const { updateProfileById } = require("../../service/auth/authService.service");
 
 const signup = asyncHandler(async (req, res, next) => {
   const { fullName, email, password } = req.body;
@@ -136,7 +137,7 @@ const login = asyncHandler(async (req, res, next) => {
 });
 
 const logout = asyncHandler(async (req, res, next) => {
-  console.log(req.cookies.refresh_token);
+  // console.log(req.cookies.refresh_token);
   const refreshToken = req.cookies.refresh_token;
 
   await authService.logout(refreshToken);
@@ -163,4 +164,34 @@ const logout = asyncHandler(async (req, res, next) => {
     message: "Logged out successfully!!!",
   });
 });
-module.exports = { signup, login, logout };
+
+const updateProfile = asyncHandler(async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return next("Profile Pic is Required");
+    }
+
+    const photoUrl = req.file.path;
+    const isProfileUpdated = await updateProfileById(req.user.id, photoUrl);
+    if (!isProfileUpdated) {
+      return next(new Error("Profile Picture is not Updated"));
+    }
+    res.status(201).json({
+      success: true,
+      message: "Profile Updated Successfull",
+    });
+  } catch (error) {
+    logger.error(
+      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`
+    );
+  }
+});
+
+const getUserDetailsById = asyncHandler(async (req, res, next) => {
+  const user_id = req?.user?.id;
+
+  const result = await authService.getUserDetailsById(user_id);
+  return res.status(200).json(result);
+});
+
+module.exports = { signup, login, logout, updateProfile, getUserDetailsById };

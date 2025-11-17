@@ -85,6 +85,31 @@ const refresh = async (refresh_token) => {
   return { access_token: new_access_token, refresh_token: new_refresh_token };
 };
 
+const updateProfileById = async (id, photoUrl) => {
+  try {
+    const result = await User.update(
+      { profilePic: photoUrl },
+      { where: { id } }
+    );
+
+    return result > 0;
+  } catch (error) {
+    console.log(error);
+
+    logger.error(
+      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`
+    );
+  }
+};
+
+const getUserDetailsById = async (id) => {
+  const result = User.findOne(
+    { attributes: ["id", "fullName", "email"] },
+    { where: { id } }
+  );
+  return result;
+};
+
 module.exports = {
   findUserByEmail,
   createUser,
@@ -92,4 +117,6 @@ module.exports = {
   verifyCaptchaResponse,
   logout,
   refresh,
+  updateProfileById,
+  getUserDetailsById,
 };
