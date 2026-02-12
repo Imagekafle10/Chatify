@@ -10,7 +10,7 @@ const arcjetProtection = require("../../middleware/arcJet.middleware");
 
 const router = express.Router(); // Corrected
 
-router.use(arcjetProtection);
+// router.use(arcjetProtection);
 // Example route
 router.post("/signup", validateSignup, authController.signup);
 
