@@ -1,6 +1,7 @@
 const express = require("express");
-const { PORT } = require("./utils/constant"); // make sure PORT is defined in constant.js
+const { PORT, REACT_APP_URL } = require("./utils/constant"); // make sure PORT is defined in constant.js
 const { PATH } = require("./utils/path");
+const cors = require("cors");
 const { authRoute, messageRoute } = require("./routes");
 const errorHandler = require("./utils/erroMiddleware");
 const logger = require("./utils/winstonLoggerConfig");
@@ -11,6 +12,12 @@ require("./config/db");
 require("./Model/sync");
 const app = express();
 
+const corsOptions = {
+  origin: REACT_APP_URL,
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 //middleware

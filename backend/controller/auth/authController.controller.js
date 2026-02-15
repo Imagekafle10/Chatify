@@ -43,7 +43,7 @@ const signup = asyncHandler(async (req, res, next) => {
     const access_token = await jwtService.generateToken(
       payload,
       JWT_SECRET,
-      JWT_EXPIRY
+      JWT_EXPIRY,
     );
 
     try {
@@ -65,8 +65,10 @@ const signup = asyncHandler(async (req, res, next) => {
         message: "User created successfully",
       });
   } catch (error) {
+    console.log(error);
+
     logger.error(
-      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`
+      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`,
     );
     next(error);
   }
@@ -88,7 +90,7 @@ const login = asyncHandler(async (req, res, next) => {
   const user = responeData;
   const validatePassword = await bcryptService.comparePassword(
     password,
-    user?.password
+    user?.password,
   );
 
   if (!user || !validatePassword) {
@@ -107,12 +109,12 @@ const login = asyncHandler(async (req, res, next) => {
   const access_token = await jwtService.generateToken(
     payload,
     JWT_SECRET,
-    JWT_EXPIRY
+    JWT_EXPIRY,
   );
   const refresh_token = await jwtService.generateToken(
     payload,
     REFRESH_SECRET,
-    REFRESH_EXPIRY
+    REFRESH_EXPIRY,
   );
 
   //save refresh token in the database
@@ -156,7 +158,7 @@ const logout = asyncHandler(async (req, res, next) => {
   });
 
   logger.info(
-    `Username: ${req.user.firstName || "user"} logged out successfully`
+    `Username: ${req.user.firstName || "user"} logged out successfully`,
   );
 
   return res.status(200).json({
@@ -182,7 +184,7 @@ const updateProfile = asyncHandler(async (req, res, next) => {
     });
   } catch (error) {
     logger.error(
-      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`
+      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`,
     );
   }
 });

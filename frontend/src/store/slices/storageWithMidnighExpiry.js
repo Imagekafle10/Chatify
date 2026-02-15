@@ -34,12 +34,11 @@ const storageWithMidnightExpiry = {
         await storage.removeItem(key);
         return null;
       }
-      return item.value;
+      return JSON.stringify(item.value); // ✅ return string, not object
     } catch {
       return null;
     }
   },
-
   async removeItem(key) {
     return storage.removeItem(key);
   },

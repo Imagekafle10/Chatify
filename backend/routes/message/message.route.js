@@ -2,6 +2,7 @@ const express = require("express");
 const { messageController } = require("../../controller");
 const auth = require("../../middleware/auth");
 const upload = require("../../utils/upload");
+const arcjetProtection = require("../../middleware/arcJet.middleware");
 const router = express.Router(); // Corrected
 router.use(arcjetProtection);
 
@@ -13,7 +14,7 @@ router.post(
   "/send/:id",
   upload.single("photo"),
   auth,
-  messageController.sendMessage
+  messageController.sendMessage,
 );
 
 module.exports = router;

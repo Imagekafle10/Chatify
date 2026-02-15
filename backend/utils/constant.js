@@ -20,6 +20,7 @@ const {
   CLOUDINARY_API_SECRET,
   ARCJET_KEY,
   ARCJET_ENV,
+  REACT_APP_URL,
 } = process.env;
 
 module.exports = {
@@ -42,4 +43,5 @@ module.exports = {
   CLOUDINARY_API_SECRET,
   ARCJET_KEY,
   ARCJET_ENV,
+  REACT_APP_URL,
 };

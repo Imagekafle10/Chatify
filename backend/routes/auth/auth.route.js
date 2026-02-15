@@ -19,7 +19,7 @@ router.put(
   "/updateprofile",
   upload.single("photo"),
   auth,
-  authController.updateProfile
+  authController.updateProfile,
 );
 
 router.get("/me", auth, authController.getUserDetailsById);

@@ -3,10 +3,10 @@ import { parseApiError } from "../helper/error";
 import { BASE_URL } from "../constant/common";
 
 axios.interceptors.request.use(
-  async (config) => {   
+  async (config) => {
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 axios.interceptors.response.use(
@@ -19,7 +19,7 @@ axios.interceptors.response.use(
       window.location.href = "/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 const getApi = async ({ url, params }) => {
@@ -61,7 +61,8 @@ const postApi = async ({ url, body, contentType = "application/json" }) => {
     .post(fullUrl, body, { headers, withCredentials: true })
     .then((response) => response.data)
     .catch((error) => {
-      throw Error(parseApiError(error));
+      // throw error; //remove Error()
+      throw parseApiError(error);
     });
 };
 
@@ -79,7 +80,7 @@ const deleteApi = async ({ url }) => {
       return response.data;
     })
     .catch((error) => {
-      throw Error(parseApiError(error));
+      throw parseApiError(error);
     });
 };
 
@@ -93,7 +94,7 @@ const putApi = async ({ url, body, contentType = "application/json" }) => {
     .put(fullUrl, body, { headers, withCredentials: true })
     .then((response) => response.data)
     .catch((error) => {
-      throw Error(parseApiError(error));
+      throw parseApiError(error);
     });
 };
 
