@@ -37,3 +37,19 @@ export const loginUser = createAsyncThunk(
     }
   },
 );
+
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      // const response = await postApi({ url: 'api/auth/logout' });
+      const response = await postApi({ url: "api/auth/logout" });
+      dispatch(logout());
+      toast.success("Logout successful");
+      return response.data;
+    } catch (error) {
+      toast.error("Logout Failed");
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
