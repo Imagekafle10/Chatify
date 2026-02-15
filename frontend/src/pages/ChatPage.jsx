@@ -9,10 +9,6 @@ function ChatPage() {
     useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  console.log(isloading, authUser, isLoggedIn);
-  
-
-
   return (
     <div className="text-white">
 <button

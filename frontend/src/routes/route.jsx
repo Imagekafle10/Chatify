@@ -3,6 +3,7 @@ import ChatPage from "../pages/ChatPage";
 import LoginPage from "../pages/LoginPage";
 import SiginUpPage from "../pages/SiginUpPage";
 import { Path } from "../utils/path";
+import ProtectedLayout from "../layout/ProtectedLayout";
 const AppRoute = () =>{
     return(
         <BrowserRouter>
@@ -13,9 +14,11 @@ const AppRoute = () =>{
       <div className="absolute bottom-0 -right-4 w-96 h-96 bg-cyan-500 opacity-20 blur-[100px] -z-10" />
       
 <Routes>
-  <Route path={Path.Chatpage} element={<ChatPage />}/>
   <Route path={Path.login} element={<LoginPage />}/>
+  <Route element={<ProtectedLayout />}>
+  <Route path={Path.Chatpage} element={<ChatPage />}/>
   <Route path={Path.Signup} element={<SiginUpPage />}/>
+  </Route>
 </Routes>
   </div>
 </BrowserRouter>
