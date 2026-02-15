@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../store/slices/authSlice";
+import { login, logout } from "../store/slices/authSlice";
+import toast from "react-hot-toast";
 
 
 function ChatPage() {
@@ -12,11 +13,14 @@ function ChatPage() {
   return (
     <div className="text-white">
 <button
-  className="z-10"
-  onClick={() => console.log("Clicked!")}
+  onClick={() => {dispatch(logout())
+    toast.success("Logout SucessFull")
+  }}
+  className="bg-green-500 px-4 py-2 rounded hover:bg-green-600"
 >
-  Test
+  Logout
 </button>
+
 
       ChatPage
     </div>
