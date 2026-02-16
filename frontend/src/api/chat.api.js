@@ -34,3 +34,20 @@ export const getMyChatPartners = createAsyncThunk(
     }
   },
 );
+
+export const getMessageByUserID = createAsyncThunk(
+  "chat/getMessageByUserID",
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await getApi({
+        url: `api/message/${data}`,
+        body: data,
+      });
+
+      return response?.messages;
+    } catch (error) {
+      toast.error(error);
+      return rejectWithValue(error.response.data.originalMessage);
+    }
+  },
+);
