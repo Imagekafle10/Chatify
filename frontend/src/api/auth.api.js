@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { postApi } from "../lib/axiosInstance";
+import { getApi, postApi, putApi } from "../lib/axiosInstance";
 import toast from "react-hot-toast";
 
 export const SignupUser = createAsyncThunk(
@@ -29,6 +29,7 @@ export const loginUser = createAsyncThunk(
         url: "api/auth/login",
         body: data,
       });
+      await dispatch(getUserDetailsById()).unwrap();
       toast.success("Login successful!!!");
       return response;
     } catch (error) {
@@ -49,6 +50,44 @@ export const logoutUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       toast.error("Logout Failed");
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const updateProfile = createAsyncThunk(
+  "auth/updateprofile",
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await putApi({
+        url: "api/auth/updateprofile",
+        body: data,
+        contentType: "multipart/form-data",
+      });
+      await dispatch(getUserDetailsById()).unwrap();
+      toast.success("Profile Update successful!!!");
+      return response;
+    } catch (error) {
+      toast.error("Update Unsuccessful!!!");
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+export const getUserDetailsById = createAsyncThunk(
+  "auth/getuserdetailsbyid",
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await getApi({
+        url: "api/auth/me",
+      });
+      console.log(response);
+
+      // dispatch(getUserPermission(response.user_id)).unwrap().then(res => {
+      //     localStorage.setItem('permission', JSON.stringify(res.permission));
+      // });
+      return response;
+    } catch (error) {
       return rejectWithValue(error.response.data);
     }
   },

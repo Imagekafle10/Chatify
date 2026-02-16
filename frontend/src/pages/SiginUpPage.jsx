@@ -16,7 +16,9 @@ import BorderAnimatedContainer from "../components/BorderAnimatedContainer";
 
 const { Title, Text } = Typography;
 
+
 function SignUpPage() {
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { isSigningUp } = useSelector((state) => state.auth);
 
@@ -24,7 +26,7 @@ function SignUpPage() {
   const handleSubmit = async (values) => {
     try {
       const res = await dispatch(SignupUser(values)).unwrap();
-      console.log(res);
+       form.resetFields(); // ✅ clears form
       
     } catch (err) {
      console.log("Signup failed. Try again!");
@@ -55,6 +57,7 @@ function SignUpPage() {
 
                 {/* ================= ANT DESIGN FORM ================= */}
                 <Form
+                form={form} 
                   layout="vertical"
                   onFinish={handleSubmit}
                   requiredMark={false}

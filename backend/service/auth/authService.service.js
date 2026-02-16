@@ -53,7 +53,7 @@ const refresh = async (refresh_token) => {
   //verify the refresh token
   const { user_id, username, email } = jwtService.verify(
     refresh_token,
-    REFRESH_SECRET
+    REFRESH_SECRET,
   );
 
   //check if user exists
@@ -65,12 +65,12 @@ const refresh = async (refresh_token) => {
   let new_access_token = jwtService.generateToken(
     payload,
     JWT_SECRET,
-    JWT_EXPIRY
+    JWT_EXPIRY,
   );
   let new_refresh_token = jwtService.generateToken(
     payload,
     REFRESH_SECRET,
-    REFRESH_EXPIRY
+    REFRESH_EXPIRY,
   );
 
   await RefreshToken.update(
@@ -79,7 +79,7 @@ const refresh = async (refresh_token) => {
       where: {
         [Op.and]: [{ token: refresh_token }, { user_id: user_id }],
       },
-    }
+    },
   );
 
   return { access_token: new_access_token, refresh_token: new_refresh_token };
@@ -87,26 +87,25 @@ const refresh = async (refresh_token) => {
 
 const updateProfileById = async (id, photoUrl) => {
   try {
-    const result = await User.update(
+    const [affectedRows] = await User.update(
       { profilePic: photoUrl },
-      { where: { id } }
+      { where: { id } },
     );
 
-    return result > 0;
+    // console.log(affectedRows);
+    return affectedRows > 0;
   } catch (error) {
     console.log(error);
-
-    logger.error(
-      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`
-    );
   }
 };
 
 const getUserDetailsById = async (id) => {
-  const result = User.findOne(
-    { attributes: ["id", "fullName", "email"] },
-    { where: { id } }
-  );
+  const result = await User.findOne({
+    attributes: ["id", "fullName", "email", "profilePic"],
+    where: { id },
+  });
+
+  console.log(result);
   return result;
 };
 

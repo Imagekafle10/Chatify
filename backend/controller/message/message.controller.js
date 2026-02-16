@@ -13,7 +13,7 @@ const getAllContacts = asyncHandler(async (req, res, next) => {
     });
   } catch (error) {
     logger.error(
-      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`
+      `{Api:${req.url}, Error:${error.message}, stack:${error.stack} }`,
     );
   }
 });
@@ -23,7 +23,7 @@ const getmessagesByUserId = asyncHandler(async (req, res, next) => {
   const { id: userToChatId } = req.params;
   const messages = await messageService.getmessagesByUserIdService(
     myId,
-    userToChatId
+    userToChatId,
   );
   res.status(201).json({
     success: true,
@@ -81,11 +81,10 @@ const sendMessage = async (req, res) => {
 };
 
 const getChatPartners = asyncHandler(async (req, res, next) => {
-  const loggedInUserId = req.user.id;
+  const loggedInUserId = req?.user?.id;
 
-  const chatPartners = await messageService.getChatPartnersService(
-    loggedInUserId
-  );
+  const chatPartners =
+    await messageService.getChatPartnersService(loggedInUserId);
 
   res.status(201).json({
     success: true,

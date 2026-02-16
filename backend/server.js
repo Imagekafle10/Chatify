@@ -28,6 +28,17 @@ app.use("/api/message", messageRoute);
 
 app.use(errorHandler);
 
+app.use(
+  "/uploads",
+  cors({ origin: REACT_APP_URL, credentials: true }),
+  express.static("uploads", {
+    setHeaders: (res, path) => {
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin"); // allow cross-origin images
+      res.setHeader("Access-Control-Allow-Origin", REACT_APP_URL);
+    },
+  }),
+);
+
 // Start server
 app.listen(PORT, () => {
   logger.info(`Server Running at http://localhost:${PORT}`.bgBlue);

@@ -11,6 +11,7 @@ import {
 } from "redux-persist";
 
 import authReducer from "./slices/authSlice";
+import chatReducer from "./slices/chatStoreSlice";
 import storageWithMidnightExpiry from "./slices/storageWithMidnighExpiry";
 
 const authPersistConfig = {
@@ -22,6 +23,7 @@ const persistAuthReducer = persistReducer(authPersistConfig, authReducer);
 
 const rootReducer = combineReducers({
   auth: persistAuthReducer,
+  chat: chatReducer,
 });
 
 // console.log(await storageWithMidnightExpiry.getItem("auth"));
