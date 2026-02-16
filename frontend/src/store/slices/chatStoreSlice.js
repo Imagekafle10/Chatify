@@ -3,6 +3,7 @@ import {
   getAllContacts,
   getMessageByUserID,
   getMyChatPartners,
+  sendMessage,
 } from "../../api/chat.api";
 
 const initialValues = {
@@ -30,6 +31,14 @@ const chatSlice = createSlice({
     },
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
+    },
+    addOptimisticMessage: (state, action) => {
+      // state.messages.push(action.payload);
+    },
+    removeOptimisticMessage: (state, action) => {
+      state.messages = state.messages.filter(
+        (msg) => msg.id !== action.payload,
+      );
     },
   },
   extraReducers: (builder) => {
@@ -73,8 +82,28 @@ const chatSlice = createSlice({
         state.isMessagesLoading = false;
         state.messages = null;
       });
+    builder
+      .addCase(sendMessage.pending, (state) => {
+        state.isMessagesLoading = true;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.isMessagesLoading = false;
+
+        // Replace optimistic message with real server message
+        state.messages.push(action.payload);
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.isMessagesLoading = false;
+        state.isError = action.payload;
+      });
   },
 });
 
-export const { toggleSound, setActiveTab, setSelectedUser } = chatSlice.actions;
+export const {
+  toggleSound,
+  setActiveTab,
+  setSelectedUser,
+  addOptimisticMessage,
+  removeOptimisticMessage,
+} = chatSlice.actions;
 export default chatSlice.reducer;

@@ -3,18 +3,20 @@ import { Input, Button, Upload, Tooltip } from "antd";
 import { UploadOutlined, SendOutlined, CloseOutlined } from "@ant-design/icons";
 import useKeyboardSound from "../hooks/useKeyboardSound";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { sendMessage } from "../api/chat.api";
 
 const { TextArea } = Input;
 
 function MessageInput() {
   const { playRandomKeyStrokeSound } = useKeyboardSound();
-  const { sendMessage, isSoundEnabled } = useSelector(state=>state.chat)
+  const {  isSoundEnabled } = useSelector(state=>state.chat)
 
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-
+const dispatch  = useDispatch();
   const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -22,10 +24,16 @@ function MessageInput() {
 
     if (isSoundEnabled) playRandomKeyStrokeSound();
 
-    sendMessage({ text: text.trim(), image: imagePreview });
+  const formData = new FormData();
+    formData.append("text", text.trim());
+    if (selectedFile) formData.append("photo", selectedFile);
+
+    dispatch(sendMessage(formData)); // send FormData
+    
 
     setText("");
     setImagePreview(null);
+     setSelectedFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -39,6 +47,7 @@ function MessageInput() {
     const reader = new FileReader();
     reader.onloadend = () => setImagePreview(reader.result);
     reader.readAsDataURL(file);
+        setSelectedFile(file);
   };
 
   const removeImage = () => {
@@ -74,16 +83,30 @@ function MessageInput() {
         onSubmit={handleSendMessage}
         className="max-w-3xl mx-auto flex items-center gap-2"
       >
-        <TextArea
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            if (isSoundEnabled) playRandomKeyStrokeSound();
-          }}
-          placeholder="Type your message..."
-          autoSize={{ minRows: 1, maxRows: 4 }}
-          className="flex-1 bg-slate-800/50 text-white border border-slate-700 rounded-lg px-3 py-2 resize-none"
-        />
+<TextArea
+  value={text}
+  onChange={(e) => {
+    setText(e.target.value);
+    if (isSoundEnabled) playRandomKeyStrokeSound();
+  }}
+  placeholder="Type your message..."
+  autoSize={{ minRows: 1, maxRows: 4 }}
+  style={{
+    backgroundColor: "rgba(15, 23, 42, 0.8)", // darker slate
+    color: "#ffffff",
+    border: "1px solid #334155", // slate-700
+    borderRadius: "10px",
+    padding: "8px 12px",
+  }}
+  className="
+    flex-1
+    resize-none
+    placeholder:text-slate-400
+    focus:!bg-slate-900
+    focus:!border-cyan-500
+    focus:!shadow-none
+  "
+/>
 
         <input
           type="file"
@@ -95,10 +118,11 @@ function MessageInput() {
 
         <Tooltip title="Attach image">
           <Button
+          style={{color:"white", fontSize:"20px"}}
             icon={<UploadOutlined />}
             type="text"
             onClick={() => fileInputRef.current?.click()}
-            className={`text-slate-400 hover:text-white ${
+            className={`text-white bg-white hover:text-white ${
               imagePreview ? "text-cyan-500" : ""
             }`}
           />
@@ -106,6 +130,7 @@ function MessageInput() {
 
         <Tooltip title="Send message">
           <Button
+          style={{color:"white", fontSize:"20px"}}
             type="primary"
             htmlType="submit"
             disabled={!text.trim() && !imagePreview}

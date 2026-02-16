@@ -7,6 +7,7 @@ import MessageInput from "./MessageInput";
 import { useDispatch, useSelector } from "react-redux";
 import { getMessageByUserID } from "../api/chat.api";
 import { LoadingOutlined } from "@ant-design/icons";
+import { BASE_URL } from "../constant/common";
 
 function ChatContainer() {
   const dispatch  = useDispatch();
@@ -36,6 +37,7 @@ function ChatContainer() {
 
   console.log(messages);
   
+  
   return (
     <div className="flex flex-col h-full">
       <ChatHeader />
@@ -63,7 +65,7 @@ function ChatContainer() {
                   >
                     {msg.image && (
                       <img
-                        src={msg.image}
+                        src={`${BASE_URL}/${msg.image}`}
                         alt="Shared"
                         className="rounded-lg max-h-48 object-cover mb-2"
                       />

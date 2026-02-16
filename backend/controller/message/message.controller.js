@@ -64,7 +64,7 @@ const sendMessage = async (req, res) => {
       senderId,
       receiverId,
       text: text || null,
-      image: imageUrl,
+      imageUrl: imageUrl,
     });
 
     // Emit via socket.io
