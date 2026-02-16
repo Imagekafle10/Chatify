@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAllContacts, getMyChatPartners } from "../../api/chat.api";
+import {
+  getAllContacts,
+  getMessageByUserID,
+  getMyChatPartners,
+} from "../../api/chat.api";
 
 const initialValues = {
   allContacts: [],
@@ -55,6 +59,19 @@ const chatSlice = createSlice({
       .addCase(getMyChatPartners.rejected, (state) => {
         state.isUsersLoading = false;
         state.chats = null;
+      });
+    builder
+      .addCase(getMessageByUserID.pending, (state) => {
+        state.isMessagesLoading = true;
+        state.messages = null;
+      })
+      .addCase(getMessageByUserID.fulfilled, (state, action) => {
+        state.isMessagesLoading = false;
+        state.messages = action.payload;
+      })
+      .addCase(getMessageByUserID.rejected, (state) => {
+        state.isMessagesLoading = false;
+        state.messages = null;
       });
   },
 });

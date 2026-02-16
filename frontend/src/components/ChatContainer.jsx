@@ -4,12 +4,14 @@ import { Avatar, Skeleton } from "antd";
 import ChatHeader from "./ChatHeader";
 import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
 import MessageInput from "./MessageInput";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getMessageByUserID } from "../api/chat.api";
+import { LoadingOutlined } from "@ant-design/icons";
 
 function ChatContainer() {
+  const dispatch  = useDispatch();
   const {
     selectedUser,
-    getMessagesByUserId,
     messages,
     isMessagesLoading,
     subscribeToMessages,
@@ -18,11 +20,13 @@ function ChatContainer() {
   const { authUser } = useSelector(state=>state.auth)
   const messageEndRef = useRef(null);
 
+
+
   useEffect(() => {
-    getMessagesByUserId(selectedUser._id);
-    subscribeToMessages();
-    return () => unsubscribeFromMessages();
-  }, [selectedUser, getMessagesByUserId, subscribeToMessages, unsubscribeFromMessages]);
+   dispatch(getMessageByUserID(selectedUser.id));
+    // subscribeToMessages();
+    // return () => unsubscribeFromMessages();
+  }, [selectedUser, getMessageByUserID  , subscribeToMessages, unsubscribeFromMessages]);
 
   useEffect(() => {
     if (messageEndRef.current) {
@@ -30,27 +34,31 @@ function ChatContainer() {
     }
   }, [messages]);
 
+  console.log(messages);
+  
   return (
     <div className="flex flex-col h-full">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto px-4 py-6 bg-slate-900/50 backdrop-blur-sm">
         {isMessagesLoading ? (
-          <Skeleton active paragraph={{ rows: 6 }} />
+           <div className="flex items-center justify-center h-full w-full">
+          <LoadingOutlined  style={{color:"white", fontSize: "48px", }}/>
+          </div>
         ) : messages.length === 0 ? (
           <NoChatHistoryPlaceholder name={selectedUser.fullName} />
         ) : (
           <div className="max-w-3xl mx-auto space-y-4">
             {messages.map((msg) => {
-              const isMe = msg.senderId === authUser._id;
+              const isMe = msg.senderId === authUser.id;
               return (
                 <div
-                  key={msg._id}
+                  key={msg.id}
                   className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`p-3 rounded-xl max-w-xs break-words ${
-                      isMe ? "bg-cyan-600 text-white" : "bg-slate-800 text-slate-200"
+                    className={`p-2 rounded-xl max-w-xs break-words ${
+                      isMe ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-200"
                     }`}
                   >
                     {msg.image && (

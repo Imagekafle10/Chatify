@@ -4,7 +4,7 @@ import ChatContainer from "../components/ChatContainer";
 import NoConversationPlaceholder from "../components/NoChatHistoryPlaceholder";
 import ProfileHeader from "../components/ProfileHeader";
 import { useSelector, useDispatch } from "react-redux";
-import { setActiveTab } from "../store/slices/chatStoreSlice";
+import { setActiveTab, setSelectedUser } from "../store/slices/chatStoreSlice";
 import { useEffect } from "react";
 import { getAllContacts, getMyChatPartners } from "../api/chat.api";
 
@@ -25,7 +25,7 @@ function ChatPage() {
 
   }, []); // run only once on mount
 
-  console.log(allContacts);
+
   return (
     <div className="relative w-full max-w-6xl h-[800px] mx-auto">
       <BorderAnimatedContainer>
@@ -50,7 +50,10 @@ function ChatPage() {
         <List
           dataSource={Array.isArray(chats) ? chats : []}
           renderItem={(chat) => (
-            <List.Item className="hover:bg-slate-600 rounded p-2 cursor-pointer">
+            <List.Item 
+             onClick={() => dispatch(setSelectedUser(chat))}
+            className="hover:bg-slate-600 rounded p-2 cursor-pointer">
+              
               <List.Item.Meta
                 avatar={<Avatar src={chat.profilePic || "/avatar.png"} />}
                 title={<span className="text-white">{chat.fullName}</span>}
@@ -67,7 +70,9 @@ function ChatPage() {
         <List
           dataSource={Array.isArray(contacts) ? contacts : []}
           renderItem={(contact) => (
-            <List.Item className="hover:bg-slate-700 rounded p-2 cursor-pointer">
+            <List.Item 
+              onClick={() => dispatch(setSelectedUser(contact))}
+              className="hover:bg-slate-700 rounded p-2 cursor-pointer">
               <List.Item.Meta
                 avatar={<Avatar src={contact.profilePic || "/avatar.png"} />}
                 title={<span className="text-white">{contact.fullName}</span>}
