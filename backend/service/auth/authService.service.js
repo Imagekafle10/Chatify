@@ -105,7 +105,7 @@ const getUserDetailsById = async (id) => {
     where: { id },
   });
 
-  console.log(result);
+  // console.log(result);
   return result;
 };
 

@@ -1,6 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getApi, postApi } from "../lib/axiosInstance";
 import toast from "react-hot-toast";
+import {
+  addOptimisticMessage,
+  removeOptimisticMessage,
+} from "../store/slices/chatStoreSlice";
 
 export const getAllContacts = createAsyncThunk(
   "chat/getallcontacts",
@@ -46,6 +50,39 @@ export const getMessageByUserID = createAsyncThunk(
 
       return response?.messages;
     } catch (error) {
+      toast.error(error);
+      return rejectWithValue(error.response.data.originalMessage);
+    }
+  },
+);
+
+export const sendMessage = createAsyncThunk(
+  "chat/sendMessage",
+  async (data, { dispatch, rejectWithValue, getState }) => {
+    const { selectedUser, messages } = getState().chat;
+    const { authUser } = getState().auth;
+    const tempId = `temp-${Date.now()}`;
+
+    const optimisticMessage = {
+      id: tempId,
+      senderId: authUser.id,
+      receiverId: selectedUser.id,
+      text: messages.text,
+      image: messages.image,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true, // optional flag
+    };
+    dispatch(addOptimisticMessage(optimisticMessage));
+    try {
+      const response = await postApi({
+        url: `api/message/send/${selectedUser.id}`,
+        body: data,
+        contentType: "multipart/form-data",
+      });
+
+      return response;
+    } catch (error) {
+      dispatch(removeOptimisticMessage(tempId));
       toast.error(error);
       return rejectWithValue(error.response.data.originalMessage);
     }
