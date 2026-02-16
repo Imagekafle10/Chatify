@@ -1,7 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, SignupUser } from "../../api/auth.api";
+import {
+  getUserDetailsById,
+  loginUser,
+  SignupUser,
+  updateProfile,
+} from "../../api/auth.api";
 const initialValues = {
-  authUser: { name: "Jhon", id: 123, age: 25 },
+  authUser: null,
   isloading: false,
   isLoggedIn: false,
   isError: false,
@@ -51,6 +56,31 @@ const authSlice = createSlice({
         state.isloading = true;
         state.isError = false;
         state.isLoggedIn = false;
+      });
+    builder
+      .addCase(updateProfile.pending, (state) => {
+        state.isloading = true;
+        state.isError = false;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.isloading = false;
+      })
+      .addCase(updateProfile.rejected, (state) => {
+        state.isloading = false;
+        state.isError = true;
+      });
+    builder
+      .addCase(getUserDetailsById.pending, (state) => {
+        state.isloading = true;
+        state.isError = false;
+      })
+      .addCase(getUserDetailsById.fulfilled, (state, action) => {
+        state.isloading = false;
+        state.authUser = action.payload;
+      })
+      .addCase(getUserDetailsById.rejected, (state) => {
+        state.isloading = false;
+        state.isError = true;
       });
   },
 });

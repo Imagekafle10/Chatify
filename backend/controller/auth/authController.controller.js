@@ -174,7 +174,9 @@ const updateProfile = asyncHandler(async (req, res, next) => {
     }
 
     const photoUrl = req.file.path;
+
     const isProfileUpdated = await updateProfileById(req.user.id, photoUrl);
+
     if (!isProfileUpdated) {
       return next(new Error("Profile Picture is not Updated"));
     }
@@ -191,6 +193,7 @@ const updateProfile = asyncHandler(async (req, res, next) => {
 
 const getUserDetailsById = asyncHandler(async (req, res, next) => {
   const user_id = req?.user?.id;
+  console.log(user_id);
 
   const result = await authService.getUserDetailsById(user_id);
   return res.status(200).json(result);
