@@ -6,8 +6,11 @@ import { useSelector } from "react-redux";
 function ChatHeader() {
   const { selectedUser, setSelectedUser } = useSelector(state=>state.chat);
   const { onlineUsers } = useSelector(state=>state.auth)
-  // const isOnline = onlineUsers.includes(selectedUser.id);
-  const isOnline = selectedUser.id;
+  console.log(onlineUsers);
+  
+  const isOnline = onlineUsers.includes(selectedUser.id.toString());
+  // const isOnline = selectedUser.id;
+
 
   useEffect(() => {
     const handleEscKey = (event) => {

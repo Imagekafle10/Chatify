@@ -48,7 +48,7 @@ const User = sequelize.define(
   {
     timestamps: true, // adds createdAt & updatedAt
     tableName: "users",
-  }
+  },
 );
 
 module.exports = User;

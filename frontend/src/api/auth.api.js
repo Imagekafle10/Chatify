@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getApi, postApi, putApi } from "../lib/axiosInstance";
 import toast from "react-hot-toast";
+import { createSocket, disconnectSocketInstance } from "../utils/socket";
+import { setOnlineUsers } from "../store/slices/authSlice";
 
 export const SignupUser = createAsyncThunk(
   "auth/signup",
@@ -30,7 +32,9 @@ export const loginUser = createAsyncThunk(
         body: data,
       });
       await dispatch(getUserDetailsById()).unwrap();
+      dispatch(connectSocket());
       toast.success("Login successful!!!");
+
       return response;
     } catch (error) {
       toast.error("Invalid username or password");
@@ -46,6 +50,7 @@ export const logoutUser = createAsyncThunk(
       // const response = await postApi({ url: 'api/auth/logout' });
       const response = await postApi({ url: "api/auth/logout" });
       dispatch(logout());
+      dispatch(disconnectSocket());
       toast.success("Logout successful");
       return response.data;
     } catch (error) {
@@ -81,7 +86,7 @@ export const getUserDetailsById = createAsyncThunk(
       const response = await getApi({
         url: "api/auth/me",
       });
-      console.log(response);
+      // console.log(response);
 
       // dispatch(getUserPermission(response.user_id)).unwrap().then(res => {
       //     localStorage.setItem('permission', JSON.stringify(res.permission));
@@ -90,5 +95,34 @@ export const getUserDetailsById = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
+  },
+);
+
+export const connectSocket = createAsyncThunk(
+  "auth/connectSocket",
+  async (_, { getState, dispatch }) => {
+    const { authUser } = getState().auth;
+
+    if (!authUser) return;
+    console.log(authUser);
+
+    const socket = createSocket();
+
+    socket.connect();
+
+    // listen event
+    socket.on("getOnlineUsers", (userIds) => {
+      dispatch(setOnlineUsers(userIds));
+    });
+
+    return true;
+  },
+);
+
+export const disconnectSocket = createAsyncThunk(
+  "auth/disconnectSocket",
+  async () => {
+    disconnectSocketInstance();
+    return true;
   },
 );

@@ -193,7 +193,6 @@ const updateProfile = asyncHandler(async (req, res, next) => {
 
 const getUserDetailsById = asyncHandler(async (req, res, next) => {
   const user_id = req?.user?.id;
-  console.log(user_id);
 
   const result = await authService.getUserDetailsById(user_id);
   return res.status(200).json(result);
