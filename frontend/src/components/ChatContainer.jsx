@@ -34,8 +34,6 @@ function ChatContainer() {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
-  console.log(messages);
   
   
   return (
@@ -51,36 +49,39 @@ function ChatContainer() {
           <NoChatHistoryPlaceholder name={selectedUser.fullName} />
         ) : (
           <div className="max-w-3xl mx-auto space-y-4">
-            {messages.map((msg) => {
-              const isMe = msg.senderId === authUser.id;
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex ${isMe ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`p-2 rounded-xl max-w-xs break-words ${
-                      isMe ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-200"
-                    }`}
-                  >
-                    {msg.image && (
-                      <img
-                        src={`${BASE_URL}/${msg.image}`}
-                        alt="Shared"
-                        className="rounded-lg max-h-48 object-cover mb-2"
-                      />
-                    )}
-                    {msg.text && <p>{msg.text}</p>}
-                    <p className="text-xs mt-1 opacity-70 text-right">
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                </div>
-              );
+           {[...messages]
+  .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  .map((msg) => {
+    const isMe = msg.senderId === authUser.id;
+    return (
+      <div
+        key={msg.id}
+        className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+      >
+        <div
+          className={`p-2 rounded-xl max-w-xs break-words ${
+            isMe ? "bg-blue-500 text-white" : "bg-slate-800 text-slate-200"
+          }`}
+        >
+          {msg.image && (
+            <img
+              src={`${BASE_URL}/${msg.image}`}
+              alt="Shared"
+              className="rounded-lg max-h-48 object-cover mb-2"
+            />
+          )}
+          {msg.text && <p>{msg.text}</p>}
+          <p className="text-xs mt-1 opacity-70 text-right">
+            {new Date(msg.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
             })}
+          </p>
+        </div>
+      </div>
+    );
+  })}
+
             <div ref={messageEndRef} />
           </div>
         )}

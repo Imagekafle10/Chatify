@@ -6,11 +6,12 @@ const { authRoute, messageRoute } = require("./routes");
 const errorHandler = require("./utils/erroMiddleware");
 const logger = require("./utils/winstonLoggerConfig");
 const cookieParser = require("cookie-parser");
+const { app, server } = require("./utils/socket");
 require("colors");
 
 require("./config/db");
 require("./Model/sync");
-const app = express();
+// const app = express();
 
 const corsOptions = {
   origin: REACT_APP_URL,
@@ -40,6 +41,6 @@ app.use(
 );
 
 // Start server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   logger.info(`Server Running at http://localhost:${PORT}`.bgBlue);
 });

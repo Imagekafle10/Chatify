@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  connectSocket,
+  disconnectSocket,
   getUserDetailsById,
   loginUser,
   SignupUser,
@@ -11,6 +13,8 @@ const initialValues = {
   isLoggedIn: false,
   isError: false,
   isSigningUp: false,
+  onlineUsers: [],
+  socket: false,
 };
 
 const authSlice = createSlice({
@@ -22,6 +26,9 @@ const authSlice = createSlice({
     },
     login: (state, action) => {
       state.isLoggedIn = action.payload;
+    },
+    setOnlineUsers: (state, action) => {
+      state.onlineUsers = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -82,8 +89,23 @@ const authSlice = createSlice({
         state.isloading = false;
         state.isError = true;
       });
+    builder
+      .addCase(connectSocket.pending, (state) => {
+        state.socket = false;
+      })
+      .addCase(connectSocket.fulfilled, (state) => {
+        state.socket = true;
+      })
+      .addCase(connectSocket.rejected, (state) => {
+        state.socket = false;
+      })
+
+      .addCase(disconnectSocket.fulfilled, (state) => {
+        state.socket = false;
+        state.onlineUsers = [];
+      });
   },
 });
 
-export const { logout, login } = authSlice.actions;
+export const { logout, login, setOnlineUsers } = authSlice.actions;
 export default authSlice.reducer;

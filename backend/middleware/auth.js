@@ -38,14 +38,13 @@ const auth = async (req, res, next) => {
     try {
       const { id, firstName, email } = jwtService.verify(
         refreshToken,
-        REFRESH_SECRET
+        REFRESH_SECRET,
       );
 
       //generate new access token and refresh token and update old refresh token with new one
       if (id) {
-        const { access_token, refresh_token } = await authService.refresh(
-          refreshToken
-        );
+        const { access_token, refresh_token } =
+          await authService.refresh(refreshToken);
         res.cookie("refresh_token", access_token, {
           httpOnly: true,
           secure: true,
